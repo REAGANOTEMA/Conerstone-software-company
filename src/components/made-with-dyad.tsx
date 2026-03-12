@@ -1,14 +1,22 @@
-export const MadeWithDyad = () => {
+"use client";
+
+import React from "react";
+
+const AppFooter = () => {
+  const year = new Date().getFullYear();
+
   return (
-    <div className="p-4 text-center">
-      <a
-        href="https://www.dyad.sh/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-      >
-        Made with Dyad
-      </a>
+    <div className="w-full py-4 text-center border-t border-slate-800 mt-6">
+      <p className="text-sm text-slate-400">
+        © {year} <span className="text-white font-semibold">NextERP Systems</span>. 
+        All rights reserved.
+      </p>
+
+      <p className="text-xs text-slate-500 mt-1">
+        Enterprise Management Ecosystem • Built by Reagan Otema & Binsobedde Najiib
+      </p>
     </div>
   );
 };
+
+export default AppFooter;

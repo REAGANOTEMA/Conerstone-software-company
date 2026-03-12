@@ -1,17 +1,28 @@
 import { defineConfig } from "vite";
-import dyadComponentTagger from "@dyad-sh/react-vite-component-tagger";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
-export default defineConfig(() => ({
+// Vite configuration for NextERP Systems
+export default defineConfig({
   server: {
-    host: "::",
-    port: 8080,
+    host: true, // allows access from local network
+    port: 5173,
+    open: true
   },
-  plugins: [dyadComponentTagger(), react()],
+
+  plugins: [
+    react()
+  ],
+
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+      "@": path.resolve(__dirname, "./src")
+    }
   },
-}));
+
+  build: {
+    outDir: "dist",
+    sourcemap: false,
+    chunkSizeWarningLimit: 1000
+  }
+});

@@ -4,9 +4,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
+
 import DashboardLayout from "./components/layout/DashboardLayout";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -37,101 +41,175 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            
-            <Route path="/dashboard" element={
-              <DashboardLayout>
-                <Dashboard />
-              </DashboardLayout>
-            } />
-            
-            <Route path="/projects" element={
-              <DashboardLayout>
-                <Projects />
-              </DashboardLayout>
-            } />
 
-            <Route path="/projects/:id" element={
-              <DashboardLayout>
-                <ProjectDetails />
-              </DashboardLayout>
-            } />
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Dashboard />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
 
-            <Route path="/calendar" element={
-              <DashboardLayout>
-                <Calendar />
-              </DashboardLayout>
-            } />
+            <Route
+              path="/projects"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Projects />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/projects/:id"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <ProjectDetails />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
 
-            <Route path="/messages" element={
-              <DashboardLayout>
-                <Messages />
-              </DashboardLayout>
-            } />
+            <Route
+              path="/finance"
+              element={
+                <PrivateRoute roles={["director", "admin"]}>
+                  <DashboardLayout>
+                    <Finance />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
 
-            <Route path="/finance" element={
-              <DashboardLayout>
-                <Finance />
-              </DashboardLayout>
-            } />
+            <Route
+              path="/training"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Training />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/training/player/:id"
+              element={
+                <PrivateRoute>
+                  <CoursePlayer />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/training/manage/:id"
+              element={
+                <PrivateRoute roles={["director", "staff"]}>
+                  <DashboardLayout>
+                    <CourseManagement />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
 
-            <Route path="/training" element={
-              <DashboardLayout>
-                <Training />
-              </DashboardLayout>
-            } />
+            <Route
+              path="/clients"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Clients />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/hr"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <HR />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/marketing"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Marketing />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/assets"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Assets />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/compliance"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Compliance />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Settings />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Calendar />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/messages"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Messages />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Profile />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
 
-            <Route path="/training/player/:id" element={<CoursePlayer />} />
-            
-            <Route path="/training/manage/:id" element={
-              <DashboardLayout>
-                <CourseManagement />
-              </DashboardLayout>
-            } />
-
-            <Route path="/clients" element={
-              <DashboardLayout>
-                <Clients />
-              </DashboardLayout>
-            } />
-
-            <Route path="/hr" element={
-              <DashboardLayout>
-                <HR />
-              </DashboardLayout>
-            } />
-
-            <Route path="/marketing" element={
-              <DashboardLayout>
-                <Marketing />
-              </DashboardLayout>
-            } />
-
-            <Route path="/assets" element={
-              <DashboardLayout>
-                <Assets />
-              </DashboardLayout>
-            } />
-
-            <Route path="/compliance" element={
-              <DashboardLayout>
-                <Compliance />
-              </DashboardLayout>
-            } />
-
-            <Route path="/settings" element={
-              <DashboardLayout>
-                <Settings />
-              </DashboardLayout>
-            } />
-
-            <Route path="/profile" element={
-              <DashboardLayout>
-                <Profile />
-              </DashboardLayout>
-            } />
-
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

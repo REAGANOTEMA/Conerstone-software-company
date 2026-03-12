@@ -1,21 +1,20 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  CheckCircle2, 
-  Clock, 
-  MessageSquare, 
-  Paperclip, 
-  Plus, 
+import { useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  MessageSquare,
+  Paperclip,
+  Plus,
   MoreVertical,
-  LayoutGrid,
   List,
-  Users,
   Settings,
-  Trello
+  Trello,
+  Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -25,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import KanbanBoard from '@/components/projects/KanbanBoard';
+import { cn } from '@/lib/utils';
 
 const ProjectDetails = () => {
   const navigate = useNavigate();
@@ -55,6 +55,7 @@ const ProjectDetails = () => {
 
   return (
     <div className="space-y-8">
+      {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate('/projects')} className="rounded-xl">
           <ArrowLeft size={20} />
@@ -68,17 +69,19 @@ const ProjectDetails = () => {
         </div>
       </div>
 
+      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column */}
         <div className="lg:col-span-2 space-y-8">
+          {/* Project Overview */}
           <Card className="border-none shadow-sm rounded-3xl">
             <CardHeader>
               <CardTitle>Project Overview</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <p className="text-slate-600 leading-relaxed">
-                {project.description}
-              </p>
+              <p className="text-slate-600 leading-relaxed">{project.description}</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {/** Stats */}
                 <div className="space-y-1">
                   <p className="text-xs text-slate-500 font-medium uppercase">Deadline</p>
                   <div className="flex items-center gap-2 text-slate-900 font-semibold">
@@ -118,6 +121,7 @@ const ProjectDetails = () => {
             </CardContent>
           </Card>
 
+          {/* Tabs */}
           <Tabs defaultValue="tasks" className="w-full">
             <div className="flex items-center justify-between mb-6">
               <TabsList className="bg-white p-1 rounded-xl shadow-sm border border-slate-100">
@@ -125,41 +129,40 @@ const ProjectDetails = () => {
                 <TabsTrigger value="timeline" className="rounded-lg px-6">Timeline</TabsTrigger>
                 <TabsTrigger value="files" className="rounded-lg px-6">Files</TabsTrigger>
               </TabsList>
-              
+
+              {/* View Mode */}
               <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
-                <Button 
-                  variant={viewMode === 'list' ? 'white' : 'ghost'} 
-                  size="sm" 
+                <Button
+                  variant={viewMode === 'list' ? 'white' : 'ghost'}
+                  size="sm"
                   className={cn("h-8 rounded-lg px-3", viewMode === 'list' && "bg-white shadow-sm")}
                   onClick={() => setViewMode('list')}
                 >
-                  <List size={16} className="mr-2" />
-                  List
+                  <List size={16} className="mr-2" /> List
                 </Button>
-                <Button 
-                  variant={viewMode === 'kanban' ? 'white' : 'ghost'} 
-                  size="sm" 
+                <Button
+                  variant={viewMode === 'kanban' ? 'white' : 'ghost'}
+                  size="sm"
                   className={cn("h-8 rounded-lg px-3", viewMode === 'kanban' && "bg-white shadow-sm")}
                   onClick={() => setViewMode('kanban')}
                 >
-                  <Trello size={16} className="mr-2" />
-                  Board
+                  <Trello size={16} className="mr-2" /> Board
                 </Button>
               </div>
             </div>
 
-            <TabsContent value="tasks" className="mt-0">
+            {/* Tasks Tab */}
+            <TabsContent value="tasks">
               {viewMode === 'list' ? (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold text-slate-900">Project Tasks</h3>
                     <Button size="sm" className="bg-blue-600 hover:bg-blue-700 rounded-xl">
-                      <Plus size={16} className="mr-2" />
-                      Add Task
+                      <Plus size={16} className="mr-2" /> Add Task
                     </Button>
                   </div>
-                  <div className="grid grid-cols-1 gap-3">
-                    {project.tasks.map((task) => (
+                  <div className="space-y-3">
+                    {project.tasks.map(task => (
                       <div key={task.id} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 hover:border-blue-200 transition-all group shadow-sm">
                         <div className="flex items-center gap-4">
                           <div className={cn(
@@ -184,9 +187,7 @@ const ProjectDetails = () => {
                             task.status === 'Completed' ? 'bg-emerald-50 text-emerald-600' :
                             task.status === 'In Progress' ? 'bg-blue-50 text-blue-600' :
                             'bg-slate-50 text-slate-500'
-                          )}>
-                            {task.status}
-                          </Badge>
+                          )}>{task.status}</Badge>
                           <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
                             <MoreVertical size={18} />
                           </Button>
@@ -200,32 +201,33 @@ const ProjectDetails = () => {
               )}
             </TabsContent>
 
-            <TabsContent value="timeline" className="mt-0">
+            {/* Timeline Tab */}
+            <TabsContent value="timeline">
               <Card className="border-none shadow-sm rounded-3xl">
-                <CardContent className="p-8">
-                  <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
-                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-600 text-white shadow-lg shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+                <CardContent className="p-8 space-y-8">
+                  <div className="relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
+                    <div className="relative flex items-center gap-4">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-600 text-white shadow-lg shrink-0">
                         <CheckCircle2 size={16} />
                       </div>
-                      <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-2xl border border-slate-100 bg-white shadow-sm">
-                        <div className="flex items-center justify-between space-x-2 mb-1">
-                          <div className="font-bold text-slate-900">Project Kickoff</div>
+                      <div className="p-5 rounded-2xl border border-slate-100 bg-white shadow-sm w-full">
+                        <div className="flex justify-between mb-1">
+                          <span className="font-bold text-slate-900">Project Kickoff</span>
                           <time className="text-xs font-bold text-blue-600">Aug 15, 2024</time>
                         </div>
-                        <div className="text-slate-500 text-sm">Initial meeting with Iganga High School administration.</div>
+                        <p className="text-slate-500 text-sm">Initial meeting with Iganga High School administration.</p>
                       </div>
                     </div>
-                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-600 text-white shadow-lg shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+                    <div className="relative flex items-center gap-4">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-600 text-white shadow-lg shrink-0">
                         <CheckCircle2 size={16} />
                       </div>
-                      <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-2xl border border-slate-100 bg-white shadow-sm">
-                        <div className="flex items-center justify-between space-x-2 mb-1">
-                          <div className="font-bold text-slate-900">Database Schema Design</div>
+                      <div className="p-5 rounded-2xl border border-slate-100 bg-white shadow-sm w-full">
+                        <div className="flex justify-between mb-1">
+                          <span className="font-bold text-slate-900">Database Schema Design</span>
                           <time className="text-xs font-bold text-blue-600">Sep 02, 2024</time>
                         </div>
-                        <div className="text-slate-500 text-sm">Core database architecture finalized and deployed.</div>
+                        <p className="text-slate-500 text-sm">Core database architecture finalized and deployed.</p>
                       </div>
                     </div>
                   </div>
@@ -235,7 +237,9 @@ const ProjectDetails = () => {
           </Tabs>
         </div>
 
+        {/* Right Column */}
         <div className="space-y-8">
+          {/* Team */}
           <Card className="border-none shadow-sm rounded-3xl">
             <CardHeader>
               <CardTitle>Project Team</CardTitle>
@@ -260,13 +264,13 @@ const ProjectDetails = () => {
                 </div>
               ))}
               <Separator className="my-4" />
-              <Button variant="outline" className="w-full rounded-xl">
-                <Plus size={16} className="mr-2" />
-                Invite Member
+              <Button variant="outline" className="w-full rounded-xl flex items-center justify-center">
+                <Plus size={16} className="mr-2" /> Invite Member
               </Button>
             </CardContent>
           </Card>
 
+          {/* Quick Actions */}
           <Card className="border-none shadow-sm rounded-3xl">
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>

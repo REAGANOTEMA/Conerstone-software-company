@@ -2,51 +2,21 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Search, 
-  Edit, 
-  MoreVertical, 
-  Phone, 
-  Video, 
-  Info, 
-  Send, 
-  Paperclip, 
-  Smile,
-  CheckCheck,
-  Circle,
-  ArrowLeft
+  Search, Edit, MoreVertical, Phone, Video, Send, Paperclip, Smile, CheckCheck 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import { cn } from '@/lib/utils';
-import { storage, initialData } from '@/lib/data-service';
+import { storage } from '@/lib/data-service';
 import { useAuth } from '@/context/AuthContext';
 import { showSuccess } from '@/utils/toast';
 
 const contacts = [
-  {
-    id: 1,
-    name: "Binsobedde Najiib",
-    role: "Technical Lead",
-    online: true,
-    avatar: "/src/assets/najiib.jpg"
-  },
-  {
-    id: 2,
-    name: "Alice Kyomugisha",
-    role: "Senior Developer",
-    online: false,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice"
-  },
-  {
-    id: 3,
-    name: "Dr. James Okello",
-    role: "Client (Iganga High)",
-    online: true,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=James"
-  }
+  { id: 1, name: "Binsobedde Najiib", role: "Technical Lead", online: true, avatar: "/src/assets/najiib.jpg" },
+  { id: 2, name: "Alice Kyomugisha", role: "Senior Developer", online: false, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice" },
+  { id: 3, name: "Dr. James Okello", role: "Client (Iganga High)", online: true, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=James" }
 ];
 
 const Messages = () => {
@@ -56,6 +26,7 @@ const Messages = () => {
   const [allMessages, setAllMessages] = useState<any[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Load saved messages on mount
   useEffect(() => {
     const saved = storage.get('messages', [
       { id: 1, contactId: 1, text: "Hey Reagan, did you review the new ERP module?", sender: 'them', time: '10:30 AM', status: 'read' },
@@ -64,10 +35,9 @@ const Messages = () => {
     setAllMessages(saved);
   }, []);
 
+  // Auto-scroll to latest message
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [allMessages, selectedContact]);
 
   const handleSendMessage = (e?: React.FormEvent) => {
@@ -109,6 +79,7 @@ const Messages = () => {
 
   return (
     <div className="h-[calc(100vh-12rem)] flex bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+      
       {/* Sidebar */}
       <div className="w-80 border-r border-slate-100 flex flex-col bg-slate-50/50">
         <div className="p-6 border-b border-slate-100 bg-white">
@@ -123,7 +94,7 @@ const Messages = () => {
             <Input placeholder="Search conversations..." className="pl-10 bg-slate-100 border-none h-11 rounded-xl text-sm focus-visible:ring-blue-500" />
           </div>
         </div>
-        
+
         <ScrollArea className="flex-1">
           <div className="p-3 space-y-2">
             {contacts.map((contact) => {
@@ -180,11 +151,9 @@ const Messages = () => {
             </div>
             <div>
               <p className="font-bold text-slate-900 text-base">{selectedContact.name}</p>
-              <div className="flex items-center gap-2">
-                <span className={cn("text-[10px] font-bold uppercase tracking-wider", selectedContact.online ? "text-emerald-500" : "text-slate-400")}>
-                  {selectedContact.online ? 'Active Now' : 'Offline'}
-                </span>
-              </div>
+              <span className={cn("text-[10px] font-bold uppercase tracking-wider", selectedContact.online ? "text-emerald-500" : "text-slate-400")}>
+                {selectedContact.online ? 'Active Now' : 'Offline'}
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -201,26 +170,20 @@ const Messages = () => {
           </div>
         </div>
 
-        {/* Messages List */}
+        {/* Messages */}
         <ScrollArea className="flex-1 p-8 bg-slate-50/30">
           <div className="space-y-8 max-w-4xl mx-auto">
             <div className="flex justify-center">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] bg-white px-4 py-1.5 rounded-full shadow-sm border border-slate-100">Today</span>
             </div>
-            
             {currentChatMessages.map((msg, idx) => (
-              <div 
-                key={msg.id} 
-                className={cn(
-                  "flex flex-col max-w-[80%] animate-in fade-in slide-in-from-bottom-2 duration-300",
-                  msg.sender === 'me' ? "ml-auto items-end" : "items-start"
-                )}
-              >
+              <div key={msg.id} className={cn(
+                "flex flex-col max-w-[80%] animate-in fade-in slide-in-from-bottom-2 duration-300",
+                msg.sender === 'me' ? "ml-auto items-end" : "items-start"
+              )}>
                 <div className={cn(
                   "p-4 rounded-2xl text-sm shadow-sm leading-relaxed",
-                  msg.sender === 'me' 
-                    ? "bg-blue-600 text-white rounded-tr-none shadow-blue-200" 
-                    : "bg-white text-slate-700 border border-slate-100 rounded-tl-none"
+                  msg.sender === 'me' ? "bg-blue-600 text-white rounded-tr-none shadow-blue-200" : "bg-white text-slate-700 border border-slate-100 rounded-tl-none"
                 )}>
                   {msg.text}
                 </div>
@@ -236,31 +199,14 @@ const Messages = () => {
           </div>
         </ScrollArea>
 
-        {/* Input Area */}
+        {/* Input */}
         <div className="p-6 bg-white border-t border-slate-100">
-          <form 
-            onSubmit={handleSendMessage}
-            className="flex items-center gap-3 bg-slate-50 rounded-2xl p-2 border border-slate-100 focus-within:border-blue-200 focus-within:bg-white focus-within:shadow-lg focus-within:shadow-blue-500/5 transition-all max-w-4xl mx-auto"
-          >
-            <Button type="button" variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50">
-              <Paperclip size={22} />
-            </Button>
-            <Input 
-              placeholder="Write a message..." 
-              className="border-none bg-transparent focus-visible:ring-0 text-sm h-11"
-              value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
-            />
-            <Button type="button" variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50">
-              <Smile size={22} />
-            </Button>
-            <Button 
-              type="submit"
-              disabled={!messageText.trim()}
-              className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 shadow-lg shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100"
-            >
-              <Send size={18} className="mr-2" />
-              Send
+          <form onSubmit={handleSendMessage} className="flex items-center gap-3 bg-slate-50 rounded-2xl p-2 border border-slate-100 focus-within:border-blue-200 focus-within:bg-white focus-within:shadow-lg focus-within:shadow-blue-500/5 transition-all max-w-4xl mx-auto">
+            <Button type="button" variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50"><Paperclip size={22} /></Button>
+            <Input placeholder="Write a message..." className="border-none bg-transparent focus-visible:ring-0 text-sm h-11" value={messageText} onChange={(e) => setMessageText(e.target.value)} />
+            <Button type="button" variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50"><Smile size={22} /></Button>
+            <Button type="submit" disabled={!messageText.trim()} className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 shadow-lg shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100">
+              <Send size={18} className="mr-2" /> Send
             </Button>
           </form>
         </div>
