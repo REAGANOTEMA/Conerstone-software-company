@@ -36,6 +36,7 @@ const Register = () => {
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate inputs
     if (!name || !email || !role || !password) {
       return showError("All fields are required.");
     }
@@ -45,9 +46,9 @@ const Register = () => {
     }
 
     try {
-      register(name, email, role);
+      // Register the user using the provided info
+      register(name, email, role, password);
       showSuccess("Account created successfully!");
-
       navigate("/dashboard");
     } catch (err) {
       showError("Registration failed. Please try again.");
@@ -56,7 +57,6 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 relative overflow-hidden">
-      
       {/* Background Blur */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
@@ -64,7 +64,6 @@ const Register = () => {
       </div>
 
       <div className="w-full max-w-md px-4 relative z-10">
-
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center p-3 bg-blue-600 rounded-2xl shadow-xl shadow-blue-900/20 mb-4">
@@ -73,13 +72,11 @@ const Register = () => {
           <h1 className="text-3xl font-bold text-white tracking-tight">
             Join NextERP Systems
           </h1>
-          <p className="text-slate-400 mt-2">
-            Create your enterprise account
-          </p>
+          <p className="text-slate-400 mt-2">Create your enterprise account</p>
         </div>
 
+        {/* Register Card */}
         <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-xl text-white">
-          
           <CardHeader>
             <CardTitle>Create Account</CardTitle>
             <CardDescription className="text-slate-400">
@@ -89,7 +86,6 @@ const Register = () => {
 
           <form onSubmit={handleRegister}>
             <CardContent className="space-y-4">
-
               {/* Name */}
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
@@ -118,7 +114,6 @@ const Register = () => {
               {/* Role */}
               <div className="space-y-2">
                 <Label>Account Type</Label>
-
                 <Select
                   defaultValue="client"
                   onValueChange={(value) => setRole(value as Role)}
@@ -138,7 +133,6 @@ const Register = () => {
               {/* Password */}
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-
                 <Input
                   id="password"
                   type="password"
@@ -157,10 +151,10 @@ const Register = () => {
                 Create Account
                 <UserPlus className="ml-2" size={18} />
               </Button>
-
             </CardContent>
           </form>
 
+          {/* Footer */}
           <CardFooter className="flex justify-center border-t border-slate-800 pt-4">
             <p className="text-slate-400 text-sm">
               Already have an account?{" "}
@@ -169,7 +163,6 @@ const Register = () => {
               </Link>
             </p>
           </CardFooter>
-
         </Card>
       </div>
     </div>

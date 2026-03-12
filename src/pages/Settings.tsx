@@ -1,67 +1,84 @@
 "use client";
 
-import React, { useState } from 'react';
-import { 
-  User, 
-  Bell, 
-  Shield, 
-  Globe, 
-  CreditCard, 
-  Save, 
-  Building2 
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import React, { useState } from "react";
+import {
+  User,
+  Bell,
+  Shield,
+  Globe,
+  CreditCard,
+  Save,
+  Building2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { showSuccess } from '@/utils/toast';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { showSuccess } from "@/utils/toast";
 
 const Settings = () => {
   // Organization state
   const [orgData, setOrgData] = useState({
-    name: 'NextERP Systems',
-    email: 'contact@nexterp.com',
-    phone: '+256 700 000 000',
-    website: 'https://nexterp.com',
-    address: 'Hamdan Building, Main Street, Iganga, Uganda'
+    name: "NextERP Systems",
+    email: "contact@nexterp.com",
+    phone: "+256 700 000 000",
+    website: "https://nexterp.com",
+    address: "Hamdan Building, Main Street, Iganga, Uganda",
   });
 
   // System preferences
   const [prefs, setPrefs] = useState({
     multiTenant: true,
     backups: true,
-    maintenance: false
+    maintenance: false,
   });
 
-  // Personal profile
+  // Personal profile state
   const [profile, setProfile] = useState({
-    firstName: 'Reagan',
-    lastName: 'Otema',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200'
+    firstName: "Reagan",
+    lastName: "Otema",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200",
   });
 
+  // Handle organization data changes
   const handleOrgChange = (field: string, value: string) => {
-    setOrgData(prev => ({ ...prev, [field]: value }));
+    setOrgData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Handle personal profile changes
   const handleProfileChange = (field: string, value: string) => {
-    setProfile(prev => ({ ...prev, [field]: value }));
+    setProfile((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Handle profile image upload
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfile((prev) => ({ ...prev, avatar: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle preferences toggle
   const handlePrefsToggle = (field: string) => {
-    setPrefs(prev => ({ ...prev, [field]: !prev[field as keyof typeof prefs] }));
+    setPrefs((prev) => ({ ...prev, [field]: !prev[field as keyof typeof prefs] }));
   };
 
+  // Save organization details
   const saveOrg = () => {
-    showSuccess('Organization settings saved!');
+    showSuccess("Organization settings saved!");
   };
 
+  // Save personal profile details
   const saveProfile = () => {
-    showSuccess('Profile updated!');
+    showSuccess("Profile updated!");
   };
 
   return (
@@ -104,55 +121,30 @@ const Settings = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label>Organization Name</Label>
-                      <Input value={orgData.name} onChange={e => handleOrgChange('name', e.target.value)} />
+                      <Input value={orgData.name} onChange={(e) => handleOrgChange("name", e.target.value)} />
                     </div>
                     <div className="space-y-2">
                       <Label>Business Email</Label>
-                      <Input value={orgData.email} onChange={e => handleOrgChange('email', e.target.value)} />
+                      <Input value={orgData.email} onChange={(e) => handleOrgChange("email", e.target.value)} />
                     </div>
                     <div className="space-y-2">
                       <Label>Phone Number</Label>
-                      <Input value={orgData.phone} onChange={e => handleOrgChange('phone', e.target.value)} />
+                      <Input value={orgData.phone} onChange={(e) => handleOrgChange("phone", e.target.value)} />
                     </div>
                     <div className="space-y-2">
                       <Label>Website</Label>
-                      <Input value={orgData.website} onChange={e => handleOrgChange('website', e.target.value)} />
+                      <Input value={orgData.website} onChange={(e) => handleOrgChange("website", e.target.value)} />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Headquarters Address</Label>
-                    <Input value={orgData.address} onChange={e => handleOrgChange('address', e.target.value)} />
+                    <Input value={orgData.address} onChange={(e) => handleOrgChange("address", e.target.value)} />
                   </div>
                   <div className="flex justify-end">
                     <Button className="bg-blue-600 hover:bg-blue-700 flex items-center" onClick={saveOrg}>
                       <Save className="mr-2" size={18} /> Save Changes
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-none shadow-sm">
-                <CardHeader>
-                  <CardTitle>System Preferences</CardTitle>
-                  <CardDescription>Configure global system behavior.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {Object.entries(prefs).map(([key, value]) => (
-                    <div key={key}>
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label>{key === 'multiTenant' ? 'Multi-tenant Isolation' : key === 'backups' ? 'Automatic Backups' : 'Maintenance Mode'}</Label>
-                          <p className="text-sm text-slate-500">
-                            {key === 'multiTenant' && 'Strict data separation between client organizations.'}
-                            {key === 'backups' && 'Daily database backups to secure cloud storage.'}
-                            {key === 'maintenance' && 'Temporarily disable access for system updates.'}
-                          </p>
-                        </div>
-                        <Switch checked={value} onCheckedChange={() => handlePrefsToggle(key)} />
-                      </div>
-                      <Separator className="my-2" />
-                    </div>
-                  ))}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -171,18 +163,21 @@ const Settings = () => {
                       <AvatarFallback>RO</AvatarFallback>
                     </Avatar>
                     <div className="space-y-2">
-                      <Button variant="outline" size="sm">Change Photo</Button>
+                      <input type="file" accept="image/*" onChange={handleImageChange} />
+                      <Button variant="outline" size="sm" onClick={() => document.querySelector('input[type="file"]')?.click()}>
+                        Change Photo
+                      </Button>
                       <p className="text-xs text-slate-500">JPG, GIF or PNG. Max size of 2MB.</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label>First Name</Label>
-                      <Input value={profile.firstName} onChange={e => handleProfileChange('firstName', e.target.value)} />
+                      <Input value={profile.firstName} onChange={(e) => handleProfileChange("firstName", e.target.value)} />
                     </div>
                     <div className="space-y-2">
                       <Label>Last Name</Label>
-                      <Input value={profile.lastName} onChange={e => handleProfileChange('lastName', e.target.value)} />
+                      <Input value={profile.lastName} onChange={(e) => handleProfileChange("lastName", e.target.value)} />
                     </div>
                   </div>
                   <div className="flex justify-end">
@@ -202,7 +197,6 @@ const Settings = () => {
             <TabsContent value="billing" className="mt-0">
               <Card className="border-none shadow-sm p-6 text-slate-500">Billing & Plans settings coming soon...</Card>
             </TabsContent>
-
           </div>
         </div>
       </Tabs>

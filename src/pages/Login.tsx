@@ -11,6 +11,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { showError } from "@/utils/toast";
 
+// Import images directly
+import LogoImg from "@/assets/logo.jpg";
+import ReaganImg from "@/assets/reagan.png";
+import NajiibImg from "@/assets/najiib.jpg";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,10 +24,17 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent, role: "director" | "client", specificEmail?: string, specificPassword?: string) => {
+  const handleLogin = (
+    e: React.FormEvent,
+    role: "director" | "client" | "staff" | "student",
+    specificEmail?: string,
+    specificPassword?: string
+  ) => {
     e.preventDefault();
-    const loginEmail = specificEmail || (role === "client" ? clientEmail : email);
-    const loginPassword = specificPassword || (role === "client" ? clientPassword : password);
+    const loginEmail =
+      specificEmail || (role === "client" ? clientEmail : email);
+    const loginPassword =
+      specificPassword || (role === "client" ? clientPassword : password);
 
     const success = login(loginEmail, loginPassword || "password123", role);
 
@@ -45,9 +57,11 @@ const Login = () => {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center p-1 bg-white rounded-2xl shadow-xl shadow-blue-900/20 mb-4 w-20 h-20 overflow-hidden">
-            <img src="/src/assets/logo.jpg" alt="NextERP Logo" className="w-full h-full object-contain" />
+            <img src={LogoImg} alt="NextERP Logo" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">NextERP Systems</h1>
+          <h1 className="text-3xl font-bold text-white tracking-tight">
+            NextERP Systems
+          </h1>
           <p className="text-slate-400 mt-2">Enterprise Management Ecosystem</p>
         </div>
 
@@ -55,7 +69,9 @@ const Login = () => {
         <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-xl text-white">
           <CardHeader>
             <CardTitle>Welcome Back</CardTitle>
-            <CardDescription className="text-slate-400">Select your portal to continue</CardDescription>
+            <CardDescription className="text-slate-400">
+              Select your portal to continue
+            </CardDescription>
           </CardHeader>
 
           <CardContent>
@@ -63,7 +79,9 @@ const Login = () => {
               {/* Tabs Header */}
               <TabsList className="grid grid-cols-2 bg-slate-800 mb-6">
                 <TabsTrigger value="director">Directors</TabsTrigger>
-                <TabsTrigger value="client">Client Portal</TabsTrigger>
+                <TabsTrigger value="client">Clients</TabsTrigger>
+                <TabsTrigger value="staff">Staff</TabsTrigger>
+                <TabsTrigger value="student">Students</TabsTrigger>
               </TabsList>
 
               {/* Directors Tab */}
@@ -75,11 +93,13 @@ const Login = () => {
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500">
-                        <img src="/src/assets/reagan.png" alt="Reagan" className="w-full h-full object-cover" />
+                        <img src={ReaganImg} alt="Reagan" className="w-full h-full object-cover" />
                       </div>
                       <div className="text-left">
                         <p className="text-sm font-bold">Reagan Otema</p>
-                        <p className="text-[10px] text-slate-400 group-hover:text-blue-100">Executive Director - Technology</p>
+                        <p className="text-[10px] text-slate-400 group-hover:text-blue-100">
+                          Executive Director - Technology
+                        </p>
                       </div>
                     </div>
                     <ArrowRight size={18} className="opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -91,11 +111,13 @@ const Login = () => {
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500">
-                        <img src="/src/assets/najiib.jpg" alt="Najiib" className="w-full h-full object-cover" />
+                        <img src={NajiibImg} alt="Najiib" className="w-full h-full object-cover" />
                       </div>
                       <div className="text-left">
                         <p className="text-sm font-bold">Binsobedde Najiib</p>
-                        <p className="text-[10px] text-slate-400 group-hover:text-purple-100">Executive Director - Business</p>
+                        <p className="text-[10px] text-slate-400 group-hover:text-purple-100">
+                          Executive Director - Business
+                        </p>
                       </div>
                     </div>
                     <ArrowRight size={18} className="opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -104,8 +126,12 @@ const Login = () => {
 
                 {/* Divider */}
                 <div className="relative py-4">
-                  <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-800"></span></div>
-                  <div className="relative flex justify-center text-xs uppercase"><span className="bg-slate-900 px-2 text-slate-500">Or custom login</span></div>
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-slate-800"></span>
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-slate-900 px-2 text-slate-500">Or custom login</span>
+                  </div>
                 </div>
 
                 {/* Custom Director Login */}
@@ -138,11 +164,11 @@ const Login = () => {
                 </form>
               </TabsContent>
 
-              {/* Client Tab */}
+              {/* Client, Staff, Student Tabs */}
               <TabsContent value="client">
                 <form onSubmit={(e) => handleLogin(e, "client")} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="client-email">Client ID / Email</Label>
+                    <Label htmlFor="client-email">Email / Client ID</Label>
                     <Input
                       id="client-email"
                       type="email"
@@ -170,6 +196,46 @@ const Login = () => {
                     Access Client Portal
                     <ArrowRight size={18} />
                   </Button>
+                </form>
+              </TabsContent>
+
+              <TabsContent value="staff">
+                <form onSubmit={(e) => handleLogin(e, "staff")} className="space-y-4">
+                  <Input
+                    type="email"
+                    placeholder="staff@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-slate-800 border-slate-700 text-white"
+                  />
+                  <Input
+                    type="password"
+                    placeholder="••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-slate-800 border-slate-700 text-white"
+                  />
+                  <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">Staff Login</Button>
+                </form>
+              </TabsContent>
+
+              <TabsContent value="student">
+                <form onSubmit={(e) => handleLogin(e, "student")} className="space-y-4">
+                  <Input
+                    type="email"
+                    placeholder="student@school.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-slate-800 border-slate-700 text-white"
+                  />
+                  <Input
+                    type="password"
+                    placeholder="••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-slate-800 border-slate-700 text-white"
+                  />
+                  <Button type="submit" className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white">Student Login</Button>
                 </form>
               </TabsContent>
             </Tabs>
