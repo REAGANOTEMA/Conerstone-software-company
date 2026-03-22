@@ -7,6 +7,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import { ThemeProvider } from "./components/theme-provider";
 import "./globals.css";
 
 // Get root container
@@ -22,6 +23,8 @@ const root = createRoot(container);
 // Render application
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );

@@ -17,6 +17,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import GlobalSearch from './GlobalSearch';
 import NotificationsDropdown from './NotificationsDropdown';
+import ThemeToggle from './ThemeToggle';
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -27,27 +28,28 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <Sidebar />
       <div className="pl-64">
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40">
+        <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 sticky top-0 z-40">
           <div className="flex items-center gap-4 w-96">
             <GlobalSearch />
           </div>
 
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <NotificationsDropdown />
             
-            <div className="h-8 w-[1px] bg-slate-200 mx-2"></div>
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2"></div>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-3 px-2 hover:bg-slate-50">
+                <Button variant="ghost" className="flex items-center gap-3 px-2 hover:bg-slate-50 dark:hover:bg-slate-800">
                   <div className="text-right hidden sm:block">
-                    <p className="text-sm font-semibold text-slate-900 leading-none">{user?.name}</p>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white leading-none">{user?.name}</p>
                     <p className="text-xs text-slate-500 mt-1 capitalize">{user?.role}</p>
                   </div>
-                  <Avatar className="h-9 w-9 border-2 border-white shadow-sm">
+                  <Avatar className="h-9 w-9 border-2 border-white dark:border-slate-800 shadow-sm">
                     <AvatarImage src={user?.avatar} />
                     <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
