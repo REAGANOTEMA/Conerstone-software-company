@@ -29,6 +29,29 @@ import Settings from "./pages/Settings";
 import Calendar from "./pages/Calendar";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import Company from "./pages/Company";
+import Academics from "./pages/school/Academics";
+import MyProgram from "./pages/school/MyProgram";
+import DegreeProgressAudit from "./pages/school/DegreeProgressAudit";
+import GoToClass from "./pages/school/GoToClass";
+import ClassSchedule from "./pages/school/ClassSchedule";
+import Transcripts from "./pages/school/Transcripts";
+import Assignments from "./pages/school/Assignments";
+import Grades from "./pages/school/Grades";
+import MyInformation from "./pages/school/MyInformation";
+import PrivacySettings from "./pages/school/PrivacySettings";
+import UsernameEmail from "./pages/school/UsernameEmail";
+import Finances from "./pages/school/Finances";
+import Documents from "./pages/school/Documents";
+import Resources from "./pages/school/Resources";
+import Community from "./pages/school/Community";
+import StudentWellness from "./pages/school/StudentWellness";
+import CommunityResources from "./pages/school/CommunityResources";
+import Engagement from "./pages/school/Engagement";
+import Support from "./pages/school/Support";
+import SuccessTeam from "./pages/school/SuccessTeam";
+import HelpCenter from "./pages/school/HelpCenter";
+import Companion from "./pages/school/Companion";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -204,6 +227,80 @@ const App = () => (
                 <PrivateRoute>
                   <DashboardLayout>
                     <Profile />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/company"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Company />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+
+            {/* School Portal Routes */}
+            <Route
+              path="/school/academics"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Academics />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/school/profile"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <ProfileSchool />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/school/community"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Community />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/school/support"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Support />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/school/assignments"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Assignments />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/school/grades"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Grades />
                   </DashboardLayout>
                 </PrivateRoute>
               }

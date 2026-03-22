@@ -16,6 +16,10 @@ export interface User {
   location?: string;
   organizationId?: string;
   password?: string;
+  isApproved?: boolean;
+  registrationDate?: string;
+  enrolledCourses?: string[];
+  projectIds?: string[];
 }
 
 interface AuthContextType {
@@ -25,6 +29,10 @@ interface AuthContextType {
   updateProfile: (data: Partial<User>) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  pendingUsers: User[];
+  approveUser: (userId: string) => void;
+  rejectUser: (userId: string) => void;
+  getPendingUsers: () => User[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,6 +69,7 @@ const DIRECTORS: User[] = [
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [pendingUsers, setPendingUsers] = useState<User[]>([]);
 
   // Load user from localStorage on mount
   useEffect(() => {
@@ -68,41 +77,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+    
+    // Load pending users
+    const savedPending = localStorage.getItem("nexterp_pending_users");
+    if (savedPending) {
+      setPendingUsers(JSON.parse(savedPending));
+    }
   }, []);
 
-  // Login function
+  // Login function with approval check
   const login = (email: string, password: string, role: Role): boolean => {
     const director = DIRECTORS.find(d => d.email.toLowerCase() === email.toLowerCase());
 
-    // Directors login
+    // Directors login (auto-approved)
     if (director) {
       if (director.password === password) {
-        setUser(director);
-        localStorage.setItem("nexterp_user", JSON.stringify(director));
+        const approvedDirector = { ...director, isApproved: true };
+        setUser(approvedDirector);
+        localStorage.setItem("nexterp_user", JSON.stringify(approvedDirector));
         return true;
       }
       return false;
     }
 
-    // Staff / client / student login (default password: password123)
-    if (password === "password123") {
-      const userData: User = {
-        id: Math.random().toString(36).substr(2, 9),
-        name: email.split("@")[0].charAt(0).toUpperCase() + email.split("@")[0].slice(1),
-        email,
-        role,
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-        organizationId: "org_nexterp"
-      };
-      setUser(userData);
-      localStorage.setItem("nexterp_user", JSON.stringify(userData));
+    // Check approved users
+    const approvedUsers = JSON.parse(localStorage.getItem("nexterp_approved_users") || "[]");
+    const approvedUser = approvedUsers.find((u: User) => 
+      u.email.toLowerCase() === email.toLowerCase() && u.role === role
+    );
+
+    if (approvedUser && password === "password123") {
+      setUser(approvedUser);
+      localStorage.setItem("nexterp_user", JSON.stringify(approvedUser));
       return true;
     }
 
-    return false; // Wrong password
+    return false; // Not approved or wrong password
   };
 
-  // Registration
+  // Registration with approval requirement
   const register = (name: string, email: string, role: Role) => {
     const newUser: User = {
       id: Math.random().toString(36).substr(2, 9),
@@ -110,11 +123,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       email,
       role,
       avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-      organizationId: "org_nexterp"
+      organizationId: "org_nexterp",
+      isApproved: false,
+      registrationDate: new Date().toISOString(),
+      enrolledCourses: [],
+      projectIds: []
     };
-    setUser(newUser);
-    localStorage.setItem("nexterp_user", JSON.stringify(newUser));
+    
+    // Add to pending users for director approval
+    const updated = [...pendingUsers, newUser];
+    setPendingUsers(updated);
+    localStorage.setItem("nexterp_pending_users", JSON.stringify(updated));
   };
+
+  // Approve user (directors only)
+  const approveUser = (userId: string) => {
+    const userToApprove = pendingUsers.find(u => u.id === userId);
+    if (userToApprove) {
+      const approvedUser = { ...userToApprove, isApproved: true };
+      
+      // Remove from pending and add to approved users storage
+      const updatedPending = pendingUsers.filter(u => u.id !== userId);
+      setPendingUsers(updatedPending);
+      localStorage.setItem("nexterp_pending_users", JSON.stringify(updatedPending));
+      
+      // Save to approved users
+      const approvedUsers = JSON.parse(localStorage.getItem("nexterp_approved_users") || "[]");
+      approvedUsers.push(approvedUser);
+      localStorage.setItem("nexterp_approved_users", JSON.stringify(approvedUsers));
+    }
+  };
+
+  // Reject user (directors only)
+  const rejectUser = (userId: string) => {
+    const updatedPending = pendingUsers.filter(u => u.id !== userId);
+    setPendingUsers(updatedPending);
+    localStorage.setItem("nexterp_pending_users", JSON.stringify(updatedPending));
+  };
+
+  // Get pending users
+  const getPendingUsers = () => pendingUsers;
 
   // Update profile
   const updateProfile = (data: Partial<User>) => {
@@ -132,7 +180,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, updateProfile, logout, isAuthenticated: !!user }}
+      value={{ 
+        user, 
+        login, 
+        register, 
+        updateProfile, 
+        logout, 
+        isAuthenticated: !!user,
+        pendingUsers,
+        approveUser,
+        rejectUser,
+        getPendingUsers
+      }}
     >
       {children}
     </AuthContext.Provider>
