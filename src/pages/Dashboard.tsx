@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   TrendingUp, 
   Users, 
@@ -13,7 +13,9 @@ import {
   FileText,
   DollarSign,
   ShieldCheck,
-  Zap
+  Zap,
+  UserPlus,
+  ChevronRight
 } from 'lucide-react';
 import { 
   CartesianGrid, 
@@ -32,6 +34,7 @@ import MapIntegration from '@/components/dashboard/MapIntegration';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
+import { storage } from '@/lib/data-service';
 
 const data = [
   { name: 'Jan', revenue: 4000, projects: 24 },
@@ -77,8 +80,17 @@ const activities = [
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [applications, setApplications] = useState<any[]>([]);
+  const isDirector = user?.role === 'director';
   const isReagan = user?.email === 'reagan@nexterp.com';
   const isNajiib = user?.email === 'najiib@nexterp.com';
+
+  useEffect(() => {
+    if (isDirector) {
+      const apps = storage.get('company_applications', []);
+      setApplications(apps.slice(0, 3)); // Show latest 3
+    }
+  }, [isDirector]);
 
   return (
     <div className="space-y-8">
@@ -189,30 +201,66 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-sm rounded-3xl">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest updates from your team</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {activities.map((activity) => (
-                <div key={activity.id} className="flex gap-4">
-                  <div className={cn("mt-1 p-2 rounded-lg h-fit", activity.bg, activity.color)}>
-                    <activity.icon size={16} />
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm text-slate-600 leading-tight">
-                      <span className="font-bold text-slate-900">{activity.user}</span> {activity.action} <span className="font-bold text-slate-900">{activity.target}</span>
-                    </p>
-                    <p className="text-xs text-slate-400">{activity.time}</p>
-                  </div>
+        <div className="space-y-8">
+          {/* Applications Widget (Directors Only) */}
+          {isDirector && (
+            <Card className="border-none shadow-sm rounded-3xl bg-slate-900 text-white">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">New Applications</CardTitle>
+                  <Badge className="bg-blue-600 text-white border-none">{applications.length}</Badge>
                 </div>
-              ))}
-              <Button variant="outline" className="w-full mt-4 rounded-xl">View All Activity</Button>
-            </div>
-          </CardContent>
-        </Card>
+                <CardDescription className="text-slate-400">Recent student & staff applicants</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {applications.length > 0 ? (
+                  applications.map((app) => (
+                    <div key={app.id} className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors cursor-pointer group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold">
+                          {app.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold">{app.name}</p>
+                          <p className="text-[10px] text-slate-400 capitalize">{app.type}</p>
+                        </div>
+                      </div>
+                      <ChevronRight size={16} className="text-slate-600 group-hover:text-white transition-colors" />
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4 text-slate-500 text-sm italic">No new applications</div>
+                )}
+                <Button variant="ghost" className="w-full mt-2 text-blue-400 hover:text-blue-300 hover:bg-white/5">View All Applications</Button>
+              </CardContent>
+            </Card>
+          )}
+
+          <Card className="border-none shadow-sm rounded-3xl">
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Latest updates from your team</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {activities.map((activity) => (
+                  <div key={activity.id} className="flex gap-4">
+                    <div className={cn("mt-1 p-2 rounded-lg h-fit", activity.bg, activity.color)}>
+                      <activity.icon size={16} />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm text-slate-600 leading-tight">
+                        <span className="font-bold text-slate-900">{activity.user}</span> {activity.action} <span className="font-bold text-slate-900">{activity.target}</span>
+                      </p>
+                      <p className="text-xs text-slate-400">{activity.time}</p>
+                    </div>
+                  </div>
+                ))}
+                <Button variant="outline" className="w-full mt-4 rounded-xl">View All Activity</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ShieldCheck, ArrowRight } from "lucide-react";
+import { ShieldCheck, ArrowRight, ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { showError } from "@/utils/toast";
@@ -54,6 +54,13 @@ const Login = () => {
       </div>
 
       <div className="w-full max-w-md px-4 relative z-10">
+        {/* Back to Home */}
+        <div className="mb-6">
+          <Button variant="ghost" onClick={() => navigate('/')} className="text-slate-400 hover:text-white">
+            <ArrowLeft className="mr-2" size={16} /> Back to Home
+          </Button>
+        </div>
+
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center p-1 bg-white rounded-2xl shadow-xl shadow-blue-900/20 mb-4 w-20 h-20 overflow-hidden">
@@ -246,6 +253,9 @@ const Login = () => {
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <ShieldCheck size={14} />
               <span>Secure 256-bit SSL Encrypted Connection</span>
+            </div>
+            <div className="text-center text-sm text-slate-400">
+              Don't have an account? <Link to="/register" className="text-blue-400 hover:underline">Register here</Link>
             </div>
           </CardFooter>
         </Card>
