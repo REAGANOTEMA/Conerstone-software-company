@@ -13,7 +13,10 @@ import {
   CheckCircle2,
   Briefcase,
   Code,
-  Rocket
+  Rocket,
+  Monitor,
+  Brain,
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,6 +38,7 @@ const Landing = () => {
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
           <a href="#solutions" className="hover:text-blue-600 transition-colors">Solutions</a>
           <a href="#academy" className="hover:text-blue-600 transition-colors">Academy</a>
+          <button onClick={() => navigate('/careers')} className="hover:text-blue-600 transition-colors">Careers</button>
           <a href="#about" className="hover:text-blue-600 transition-colors">About Us</a>
         </div>
         <div className="flex items-center gap-4">
@@ -50,25 +54,73 @@ const Landing = () => {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl"></div>
         </div>
 
-        <div className="max-w-5xl mx-auto text-center space-y-8 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-full text-blue-600 text-xs font-bold uppercase tracking-widest animate-fade-in">
-            <Rocket size={14} />
-            Empowering East Africa's Digital Future
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-full text-blue-600 text-xs font-bold uppercase tracking-widest animate-fade-in">
+              <Rocket size={14} />
+              Empowering East Africa's Digital Future
+            </div>
+            <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
+              The Operating System for <span className="text-blue-600">Modern Enterprise.</span>
+            </h1>
+            <p className="text-xl text-slate-500 leading-relaxed">
+              NextERP Systems provides world-class software solutions and professional IT training to bridge the technology gap in Africa.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
+              <Button size="lg" onClick={() => navigate('/apply')} className="bg-blue-600 hover:bg-blue-700 rounded-2xl h-16 px-10 text-lg font-bold shadow-xl shadow-blue-200 group w-full sm:w-auto">
+                Join Our Academy
+                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="rounded-2xl h-16 px-10 text-lg font-bold border-slate-200 hover:bg-slate-50 w-full sm:w-auto">
+                Access Portal
+              </Button>
+            </div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
-            The Operating System for <span className="text-blue-600">Modern Enterprise.</span>
-          </h1>
-          <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            NextERP Systems provides world-class software solutions and professional IT training to bridge the technology gap in Africa.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Button size="lg" onClick={() => navigate('/apply')} className="bg-blue-600 hover:bg-blue-700 rounded-2xl h-16 px-10 text-lg font-bold shadow-xl shadow-blue-200 group">
-              Join Our Team
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="rounded-2xl h-16 px-10 text-lg font-bold border-slate-200 hover:bg-slate-50">
-              Access Portal
-            </Button>
+
+          {/* Hero Image Grid */}
+          <div className="grid grid-cols-2 gap-4 relative">
+            <div className="space-y-4 pt-12">
+              <div className="rounded-3xl overflow-hidden shadow-2xl transform -rotate-2 hover:rotate-0 transition-transform duration-500">
+                <img 
+                  src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600" 
+                  alt="Software Development" 
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="rounded-3xl overflow-hidden shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                <img 
+                  src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=600" 
+                  alt="Computer Training" 
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="rounded-3xl overflow-hidden shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                <img 
+                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=600" 
+                  alt="System Design" 
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+              <div className="rounded-3xl overflow-hidden shadow-2xl transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+                <img 
+                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600" 
+                  alt="Students Collaborating" 
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+            </div>
+            {/* Floating Badge */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-2xl shadow-2xl border border-slate-100 flex items-center gap-3 animate-bounce">
+              <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
+                <CheckCircle2 size={20} />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-900">ISO Certified</p>
+                <p className="text-[10px] text-slate-500">Quality Guaranteed</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -123,6 +175,61 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Academy Section */}
+      <section id="academy" className="py-32 px-8 md:px-20">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="relative">
+            <div className="rounded-3xl overflow-hidden shadow-2xl">
+              <img 
+                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1000" 
+                alt="Academy Students" 
+                className="w-full h-[500px] object-cover"
+              />
+            </div>
+            <div className="absolute -bottom-10 -right-10 bg-blue-600 text-white p-8 rounded-3xl shadow-2xl max-w-xs hidden md:block">
+              <Sparkles className="mb-4" size={32} />
+              <h4 className="text-xl font-bold mb-2">AI-Powered Learning</h4>
+              <p className="text-sm text-blue-100">Our curriculum is enhanced by AI to provide personalized learning paths for every student.</p>
+            </div>
+          </div>
+          <div className="space-y-8">
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900">NextERP Academy</h2>
+            <p className="text-lg text-slate-600 leading-relaxed">
+              We train the next generation of tech leaders in East Africa. Our professional certification courses are designed by industry experts to get you job-ready.
+            </p>
+            <ul className="space-y-4">
+              {[
+                "Full-Stack Web Development",
+                "Cybersecurity Professional",
+                "Data Science & Analytics",
+                "Mobile App Development"
+              ].map((course, i) => (
+                <li key={i} className="flex items-center gap-3 text-slate-700 font-medium">
+                  <div className="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
+                    <CheckCircle2 size={14} />
+                  </div>
+                  {course}
+                </li>
+              ))}
+            </ul>
+            <Button size="lg" onClick={() => navigate('/apply')} className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl h-16 px-10 text-lg font-bold">
+              Browse Courses
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Careers CTA */}
+      <section className="py-24 px-8 md:px-20 bg-blue-600 text-white">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <h2 className="text-3xl md:text-5xl font-bold">Want to join our team?</h2>
+          <p className="text-xl text-blue-100">We're always looking for talented developers, designers, and educators to join our mission.</p>
+          <Button size="lg" onClick={() => navigate('/careers')} className="bg-white text-blue-600 hover:bg-blue-50 rounded-2xl h-16 px-10 text-lg font-bold">
+            View Careers <ArrowRight className="ml-2" />
+          </Button>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-white border-t border-slate-100 py-20 px-8 md:px-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
@@ -133,17 +240,16 @@ const Landing = () => {
               </div>
               <span className="font-bold text-xl tracking-tight text-slate-900">NextERP Systems</span>
             </div>
-            <p className="text-slate-500 max-w-sm leading-relaxed">
+            <p className="text-slate-500 max-sm leading-relaxed">
               Leading the digital transformation in East Africa through innovative software and professional training.
             </p>
           </div>
           <div className="space-y-4">
             <h4 className="font-bold text-slate-900">Company</h4>
             <ul className="space-y-2 text-slate-500 text-sm">
-              <li><a href="#" className="hover:text-blue-600">About Us</a></li>
-              <li><a href="#" className="hover:text-blue-600">Our Team</a></li>
-              <li><a href="#" className="hover:text-blue-600">Careers</a></li>
-              <li><a href="#" className="hover:text-blue-600">Contact</a></li>
+              <li><button onClick={() => navigate('/about')} className="hover:text-blue-600">About Us</button></li>
+              <li><button onClick={() => navigate('/careers')} className="hover:text-blue-600">Careers</button></li>
+              <li><button onClick={() => navigate('/apply')} className="hover:text-blue-600">Apply</button></li>
             </ul>
           </div>
           <div className="space-y-4">
@@ -151,7 +257,6 @@ const Landing = () => {
             <ul className="space-y-2 text-slate-500 text-sm">
               <li><a href="#" className="hover:text-blue-600">Privacy Policy</a></li>
               <li><a href="#" className="hover:text-blue-600">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-blue-600">Cookie Policy</a></li>
             </ul>
           </div>
         </div>
