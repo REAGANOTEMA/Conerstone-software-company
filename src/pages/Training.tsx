@@ -1,4 +1,4 @@
-// "use client"
+use client
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, BookOpen, Users, Clock, Star, Award, Settings, Brain, Download, PlayCircle, CheckCircle, ExternalLink, UserCheck, UserX } from 'lucide-react';

@@ -151,7 +151,7 @@ const Grades = () => {
         semesterGPA: 3.5,
         totalCredits: 14,
         earnedCredits: 11,
-        status: 'current'
+        enrollmentStatus: 'current'
       },
       {
         id: 2,
@@ -161,7 +161,7 @@ const Grades = () => {
         semesterGPA: 0,
         totalCredits: 15,
         earnedCredits: 0,
-        status: 'upcoming'
+        enrollmentStatus: 'upcoming'
       },
       {
         id: 3,
@@ -211,7 +211,7 @@ const Grades = () => {
         semesterGPA: 3.65,
         totalCredits: 7,
         earnedCredits: 7,
-        status: 'completed'
+        enrollmentStatus: 'completed'
       }
     ]
   };

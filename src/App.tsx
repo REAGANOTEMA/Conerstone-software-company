@@ -37,6 +37,7 @@ import GoToClass from "./pages/school/GoToClass";
 import ClassSchedule from "./pages/school/ClassSchedule";
 import Transcripts from "./pages/school/Transcripts";
 import Assignments from "./pages/school/Assignments";
+import AIAssignments from "./pages/school/AIAssignments";
 import Grades from "./pages/school/Grades";
 import MyInformation from "./pages/school/MyInformation";
 import PrivacySettings from "./pages/school/PrivacySettings";
@@ -301,6 +302,16 @@ const App = () => (
                 <PrivateRoute>
                   <DashboardLayout>
                     <Grades />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/school/ai-assignments"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <AIAssignments />
                   </DashboardLayout>
                 </PrivateRoute>
               }
