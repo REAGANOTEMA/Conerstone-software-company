@@ -1,10 +1,5 @@
 /* Perfect Animations for NextERP-Systems */
 
-/* Import Tailwind CSS animations */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* Custom Animation Keyframes */
 @keyframes fadeIn {
   from {

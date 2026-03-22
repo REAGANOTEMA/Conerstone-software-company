@@ -21,7 +21,8 @@ import {
   Timer,
   TrendingUp,
   Award,
-  MessageSquare
+  MessageSquare,
+  Search
 } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import NeonButton from '@/components/ui/NeonButton';
