@@ -350,7 +350,7 @@ const Assignments = () => {
                 <SelectItem value="CS304">CS304 - Cybersecurity</SelectItem>
               </SelectContent>
             </Select>
-          </Select>
+          </div>
           <Select value={selectedStatus} onValueChange={setSelectedStatus}>
             <SelectTrigger className="w-40 rounded-xl">
               <SelectValue placeholder="All Status" />
