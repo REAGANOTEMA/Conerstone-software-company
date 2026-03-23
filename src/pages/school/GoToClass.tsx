@@ -40,20 +40,43 @@ const GoToClass = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [isVideoOn, setIsVideoOn] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
+  const [isHandRaised, setIsHandRaised] = useState(false);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [volume, setVolume] = useState(75);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [currentTime, setCurrentTime] = useState("01:24:15");
+  const [messages, setMessages] = useState([
+    { user: "Dr. Sarah Johnson", text: "Welcome everyone! Today we're discussing Graph Theory.", time: "10:00 AM", isInstructor: true },
+    { user: "Alice Kyomugisha", text: "Will be slides available after class?", time: "10:02 AM" },
+    { user: "Dr. Sarah Johnson", text: "Yes, Alice. I'll upload them to the Resources tab.", time: "10:03 AM", isInstructor: true }
+  ]);
 
   const participants = [
-    { name: "Dr. Sarah Johnson", role: "Instructor", avatar: "SJ", isHost: true },
-    { name: "Reagan Otema", role: "Student", avatar: "RO" },
-    { name: "Binsobedde Najiib", role: "Student", avatar: "BN" },
-    { name: "Alice Kyomugisha", role: "Student", avatar: "AK" },
-    { name: "John Ssekandi", role: "Student", avatar: "JS" }
+    { name: "Dr. Sarah Johnson", role: "Instructor", avatar: "SJ", isHost: true, isSpeaking: true },
+    { name: "Reagan Otema", role: "Student", avatar: "RO", hasHand: false },
+    { name: "Binsobedde Najiib", role: "Student", avatar: "BN", hasHand: true },
+    { name: "Alice Kyomugisha", role: "Student", avatar: "AK", hasHand: false },
+    { name: "John Ssekandi", role: "Student", avatar: "JS", hasHand: false }
   ];
 
-  const messages = [
-    { user: "Dr. Sarah Johnson", text: "Welcome everyone! Today we're discussing Graph Theory.", time: "10:00 AM", isInstructor: true },
-    { user: "Alice Kyomugisha", text: "Will the slides be available after class?", time: "10:02 AM" },
-    { user: "Dr. Sarah Johnson", text: "Yes, Alice. I'll upload them to the Resources tab.", time: "10:03 AM", isInstructor: true }
-  ];
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (chatMessage.trim()) {
+      const newMessage = {
+        user: "Reagan Otema",
+        text: chatMessage,
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        isInstructor: false
+      };
+      setMessages([...messages, newMessage]);
+      setChatMessage("");
+    }
+  };
+
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume);
+    setIsMuted(newVolume === 0);
+  };
 
   return (
     <div className="h-[calc(100vh-12rem)] flex flex-col lg:flex-row gap-6">
@@ -62,17 +85,54 @@ const GoToClass = () => {
       <div className="flex-1 flex flex-col gap-4">
         {/* Video Stream Container */}
         <div className="relative flex-1 bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800 group">
-          {/* Main Stream (Placeholder) */}
+          {/* Main Stream with Animated Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900">
+            <div className="absolute inset-0 bg-black/20"></div>
+            {/* Animated particles for live effect */}
+            <div className="absolute inset-0">
+              {[...Array(20)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-1 h-1 bg-blue-400/30 rounded-full animate-pulse"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    animationDuration: `${2 + Math.random() * 2}s`
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Main Content */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <div className="w-24 h-24 bg-blue-600/20 rounded-full flex items-center justify-center border border-blue-500/30 animate-pulse">
-                <Video size={48} className="text-blue-500" />
+            <div className="text-center space-y-6 z-10">
+              {/* Live Indicator */}
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <Badge className="bg-red-500/20 text-red-400 border-red-500/30 animate-pulse">
+                  LIVE • {currentTime}
+                </Badge>
               </div>
-              <div className="space-y-1">
-                <h3 className="text-white font-bold text-xl">CS301: Advanced Algorithms</h3>
-                <p className="text-slate-400 text-sm">Live Lecture with Dr. Sarah Johnson</p>
+              
+              <div className="space-y-2">
+                <h3 className="text-white font-bold text-2xl">CS301: Advanced Algorithms</h3>
+                <p className="text-slate-300">Live Lecture with Dr. Sarah Johnson</p>
+                <p className="text-slate-400 text-sm">Topic: Graph Theory and Network Analysis</p>
               </div>
-              <Badge className="bg-red-500 text-white border-none animate-pulse">LIVE • 01:24:15</Badge>
+              
+              {/* Viewer Count */}
+              <div className="flex items-center justify-center gap-4 text-slate-400 text-sm">
+                <div className="flex items-center gap-1">
+                  <Users size={16} />
+                  <span>{participants.length} viewers</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Clock size={16} />
+                  <span>Started 1h 24m ago</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -92,14 +152,35 @@ const GoToClass = () => {
           <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full">
-                  <Pause size={24} />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-white hover:bg-white/20 rounded-full"
+                  onClick={() => setIsPlaying(!isPlaying)}
+                >
+                  {isPlaying ? <Pause size={24} /> : <Play size={24} />}
                 </Button>
                 <div className="flex items-center gap-2">
-                  <Volume2 size={20} className="text-white" />
-                  <div className="w-24 h-1 bg-white/30 rounded-full overflow-hidden">
-                    <div className="w-3/4 h-full bg-blue-500"></div>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-white hover:bg-white/20 rounded-full"
+                    onClick={() => handleVolumeChange(isMuted ? 50 : 0)}
+                  >
+                    {isMuted ? <Volume2 size={20} className="text-slate-400" /> : <Volume2 size={20} />}
+                  </Button>
+                  <div className="w-24 h-1 bg-white/30 rounded-full overflow-hidden cursor-pointer" onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const newVolume = Math.round((x / rect.width) * 100);
+                    handleVolumeChange(newVolume);
+                  }}>
+                    <div 
+                      className="h-full bg-blue-500 transition-all"
+                      style={{ width: `${volume}%` }}
+                    ></div>
                   </div>
+                  <span className="text-white text-xs">{volume}%</span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -108,6 +189,9 @@ const GoToClass = () => {
                 </Button>
                 <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full">
                   <Maximize2 size={20} />
+                </Button>
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full">
+                  <Share2 size={20} />
                 </Button>
               </div>
             </div>
@@ -134,10 +218,20 @@ const GoToClass = () => {
               {!isVideoOn ? <VideoOff size={20} /> : <Video size={20} />}
             </Button>
             <div className="w-[1px] h-8 bg-slate-100 mx-2"></div>
-            <Button variant="outline" size="icon" className="rounded-xl h-12 w-12 text-slate-600">
-              <Hand size={20} />
+            <Button 
+              variant={isHandRaised ? "default" : "outline"} 
+              size="icon" 
+              className={cn("rounded-xl h-12 w-12", isHandRaised && "bg-blue-600 text-white border-blue-600")}
+              onClick={() => setIsHandRaised(!isHandRaised)}
+            >
+              <Hand size={20} className={isHandRaised ? "animate-pulse" : ""} />
             </Button>
-            <Button variant="outline" size="icon" className="rounded-xl h-12 w-12 text-slate-600">
+            <Button 
+              variant={isScreenSharing ? "default" : "outline"} 
+              size="icon" 
+              className={cn("rounded-xl h-12 w-12", isScreenSharing && "bg-blue-600 text-white border-blue-600")}
+              onClick={() => setIsScreenSharing(!isScreenSharing)}
+            >
               <Monitor size={20} />
             </Button>
           </div>
@@ -191,14 +285,14 @@ const GoToClass = () => {
                 </div>
               </ScrollArea>
               <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-                <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); setChatMessage(""); }}>
+                <form className="flex gap-2" onSubmit={handleSendMessage}>
                   <Input 
                     placeholder="Type a message..." 
                     className="rounded-xl bg-white border-slate-200"
                     value={chatMessage}
                     onChange={(e) => setChatMessage(e.target.value)}
                   />
-                  <Button size="icon" className="bg-blue-600 rounded-xl shrink-0">
+                  <Button size="icon" className="bg-blue-600 rounded-xl shrink-0" type="submit">
                     <Send size={18} />
                   </Button>
                 </form>
@@ -211,15 +305,23 @@ const GoToClass = () => {
                   {participants.map((p, i) => (
                     <div key={i} className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-2xl transition-colors">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                          <AvatarFallback>{p.avatar}</AvatarFallback>
-                        </Avatar>
+                        <div className="relative">
+                          <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+                            <AvatarFallback>{p.avatar}</AvatarFallback>
+                          </Avatar>
+                          {p.isSpeaking && (
+                            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse border-2 border-white"></div>
+                          )}
+                        </div>
                         <div>
                           <p className="text-sm font-bold text-slate-900">{p.name}</p>
                           <p className="text-[10px] text-slate-500">{p.role}</p>
                         </div>
                       </div>
-                      {p.isHost && <Badge className="bg-blue-50 text-blue-600 border-none text-[10px]">Host</Badge>}
+                      <div className="flex items-center gap-2">
+                        {p.hasHand && <Hand size={14} className="text-blue-500" />}
+                        {p.isHost && <Badge className="bg-blue-50 text-blue-600 border-none text-[10px]">Host</Badge>}
+                      </div>
                     </div>
                   ))}
                 </div>
