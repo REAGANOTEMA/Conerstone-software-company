@@ -28,11 +28,13 @@ import Calendar from "./pages/Calendar";
 import Messages from "./pages/Messages";
 
 // School Portal Pages
+import StudentDashboard from "./pages/school/StudentDashboard";
 import Academics from "./pages/school/Academics";
 import MyProgram from "./pages/school/MyProgram";
 import DegreeProgressAudit from "./pages/school/DegreeProgressAudit";
 import ClassSchedule from "./pages/school/ClassSchedule";
 import GoToClass from "./pages/school/GoToClass";
+import Gatherings from "./pages/school/Gatherings";
 import SchoolProfile from "./pages/school/Profile";
 import SchoolFinances from "./pages/school/Finances";
 import SchoolDocuments from "./pages/school/Documents";
@@ -74,12 +76,13 @@ function App() {
           <Route path="/profile" element={<PrivateRoute><DashboardLayout><Profile /></DashboardLayout></PrivateRoute>} />
 
           {/* School Portal Routes */}
+          <Route path="/school/dashboard" element={<PrivateRoute><SchoolLayout><StudentDashboard /></SchoolLayout></PrivateRoute>} />
           <Route path="/school/academics" element={<PrivateRoute><SchoolLayout><Academics /></SchoolLayout></PrivateRoute>} />
           <Route path="/school/academics/program" element={<PrivateRoute><SchoolLayout><MyProgram /></SchoolLayout></PrivateRoute>} />
           <Route path="/school/academics/audit" element={<PrivateRoute><SchoolLayout><DegreeProgressAudit /></SchoolLayout></PrivateRoute>} />
           <Route path="/school/academics/schedule" element={<PrivateRoute><SchoolLayout><ClassSchedule /></SchoolLayout></PrivateRoute>} />
           <Route path="/school/academics/class" element={<PrivateRoute><SchoolLayout><GoToClass /></SchoolLayout></PrivateRoute>} />
-          <Route path="/school/academics/gatherings" element={<PrivateRoute><SchoolLayout><Community /></SchoolLayout></PrivateRoute>} />
+          <Route path="/school/academics/gatherings" element={<PrivateRoute><SchoolLayout><Gatherings /></SchoolLayout></PrivateRoute>} />
           <Route path="/school/academics/english-connect" element={<PrivateRoute><SchoolLayout><Academics /></SchoolLayout></PrivateRoute>} />
           
           <Route path="/school/profile" element={<PrivateRoute><SchoolLayout><SchoolProfile /></SchoolLayout></PrivateRoute>} />

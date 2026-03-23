@@ -22,7 +22,8 @@ import {
   FileCheck,
   Laptop,
   Sparkles,
-  HelpCircle
+  HelpCircle,
+  LayoutDashboard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from "@/components/ui/badge";
@@ -118,6 +119,7 @@ const SchoolNavigation = () => {
       icon: <Users className="w-4 h-4" />,
       children: [
         { label: 'Student Wellness', path: '/school/community/wellness' },
+        { label: 'Gatherings', path: '/school/academics/gatherings' },
       ]
     },
     {
@@ -166,11 +168,23 @@ const SchoolNavigation = () => {
       <nav className="flex-1 overflow-y-auto px-4 space-y-1 custom-scrollbar">
         <Button
           variant="ghost"
+          onClick={() => navigate('/school/dashboard')}
+          className={cn(
+            "w-full justify-start rounded-xl mb-2 font-bold",
+            location.pathname === '/school/dashboard' ? "bg-blue-600 text-white shadow-lg shadow-blue-200" : "text-slate-600 hover:bg-slate-100"
+          )}
+        >
+          <LayoutDashboard className="w-4 h-4 mr-3" />
+          <span className="font-medium">School Dashboard</span>
+        </Button>
+
+        <Button
+          variant="ghost"
           onClick={() => navigate('/dashboard')}
           className="w-full justify-start rounded-xl text-slate-600 hover:bg-slate-100 mb-2"
         >
           <Home className="w-4 h-4 mr-3" />
-          <span className="font-medium">Main Dashboard</span>
+          <span className="font-medium">Main ERP</span>
         </Button>
 
         {navItems.map((item) => (
