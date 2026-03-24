@@ -71,7 +71,7 @@ const MyProgram = () => {
       },
       {
         code: "DPO101",
-        name: "Microsoft Office",
+        name: "Microsoft Office Suite",
         credits: 3,
         grade: "A",
         instructor: "Faculty Team",
@@ -80,15 +80,48 @@ const MyProgram = () => {
       },
       {
         code: "CMD220",
-        name: "Graphics Design",
+        name: "Graphics Design & Digital Media",
         credits: 3,
         grade: "B",
         instructor: "Creative Media Faculty",
         progress: 72,
         attendance: 85
+      },
+      {
+        code: "NET301",
+        name: "Networking Fundamentals",
+        credits: 3,
+        grade: "A-",
+        instructor: "Prof. Technical Faculty",
+        progress: 88,
+        attendance: 90
+      },
+      {
+        code: "DBS201",
+        name: "Database Management Systems",
+        credits: 3,
+        grade: "B+",
+        instructor: "Dr. Database Faculty",
+        progress: 75,
+        attendance: 87
       }
     ]
   };
+
+  const allCourses = [
+    { code: "PRG201", name: "Programming (Web Programming)", credits: 4, description: "HTML, CSS, JavaScript, React.js" },
+    { code: "PRG202", name: "Programming (Computer Programming)", credits: 4, description: "Java, Python, C++, Algorithms" },
+    { code: "DPO101", name: "Microsoft Office Suite", credits: 3, description: "Word, Excel, PowerPoint, Access" },
+    { code: "CMD220", name: "Graphics Design & Digital Media", credits: 3, description: "Photoshop, Illustrator, Video Editing" },
+    { code: "NET301", name: "Networking Fundamentals", credits: 3, description: "CCNA, Network Security, Protocols" },
+    { code: "DBS201", name: "Database Management Systems", credits: 3, description: "SQL, Database Design, Administration" },
+    { code: "SEC301", name: "Cybersecurity Essentials", credits: 3, description: "Security Fundamentals, Ethical Hacking" },
+    { code: "CLO201", name: "Cloud Computing", credits: 3, description: "AWS, Azure, Cloud Architecture" },
+    { code: "MOB301", name: "Mobile App Development", credits: 3, description: "Android, iOS, React Native" },
+    { code: "PRO401", name: "Professional Development", credits: 2, description: "Communication, Leadership, Ethics" },
+    { code: "ENT301", name: "Entrepreneurship", credits: 3, description: "Business Planning, Startup Management" },
+    { code: "MKT201", name: "Digital Marketing", credits: 3, description: "SEO, Social Media, Analytics" }
+  ];
 
   const getStatusColor = (status: string) => {
     switch(status) {
