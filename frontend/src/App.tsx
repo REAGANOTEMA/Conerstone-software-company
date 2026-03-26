@@ -156,11 +156,13 @@ const Landing: React.FC = () => {
 // Register Form Component
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = React.useState({
-    student_id: '',
     first_name: '',
     last_name: '',
     email: '',
     password: '',
+    phone: '',
+    bio: '',
+    location: '',
     role: 'student'
   });
 
@@ -202,33 +204,27 @@ const RegisterForm: React.FC = () => {
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Student ID"
-              required
-              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={formData.student_id}
-              onChange={(e) => setFormData({ ...formData, student_id: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="First Name"
-              required
-              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={formData.first_name}
-              onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              required
-              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={formData.last_name}
-              onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                placeholder="First Name"
+                required
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                required
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+              />
+            </div>
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Email Address"
               required
               className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={formData.email}
@@ -242,6 +238,36 @@ const RegisterForm: React.FC = () => {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
+            <input
+              type="tel"
+              placeholder="Phone Number (Optional)"
+              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Location (City, Country)"
+              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              value={formData.location}
+              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+            />
+            <select
+              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+            >
+              <option value="student">Student</option>
+              <option value="client">Client</option>
+              <option value="staff">Staff</option>
+            </select>
+            <textarea
+              placeholder="Tell us about yourself (Optional)"
+              rows={3}
+              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              value={formData.bio}
+              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+            />
           </div>
 
           <div>
@@ -249,8 +275,17 @@ const RegisterForm: React.FC = () => {
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Register
+              Create Account
             </button>
+          </div>
+          
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Already have an account?{' '}
+              <a href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+                Sign in here
+              </a>
+            </p>
           </div>
         </form>
       </div>
