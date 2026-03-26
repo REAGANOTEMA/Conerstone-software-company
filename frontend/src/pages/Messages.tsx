@@ -9,8 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from '@/lib/utils';
-import { storage } from '@/lib/data-service';
 import { useAuth } from '@/context/AuthContext';
+import { useMessages } from '@/hooks/useExtendedApi';
 import { showSuccess } from '@/utils/toast';
 
 const contacts = [
@@ -21,58 +21,95 @@ const contacts = [
 
 const Messages = () => {
   const { user } = useAuth();
+  const { getMyMessages, createMessage } = useMessages();
   const [selectedContact, setSelectedContact] = useState(contacts[0]);
   const [messageText, setMessageText] = useState("");
   const [allMessages, setAllMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Load saved messages on mount
+  // Load messages on mount
   useEffect(() => {
-    const saved = storage.get('messages', [
-      { id: 1, contactId: 1, text: "Hey Reagan, did you review the new ERP module?", sender: 'them', time: '10:30 AM', status: 'read' },
-      { id: 2, contactId: 1, text: "Just finishing up the security audit now.", sender: 'me', time: '10:35 AM', status: 'read' }
-    ]);
-    setAllMessages(saved);
+    loadMessages();
   }, []);
+
+  const loadMessages = async () => {
+    setLoading(true);
+    try {
+      const result = await getMyMessages();
+      if (result.success) {
+        // Transform API messages to component format
+        const transformedMessages = result.messages.map((msg: any) => ({
+          id: msg.id,
+          contactId: msg.sender_id === user?.id ? msg.receiver_id : msg.sender_id,
+          text: msg.message_text,
+          sender: msg.sender_id === user?.id ? 'me' : 'them',
+          time: new Date(msg.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: msg.status
+        }));
+        setAllMessages(transformedMessages);
+      }
+    } catch (error) {
+      console.error('Failed to load messages:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Auto-scroll to latest message
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [allMessages, selectedContact]);
 
-  const handleSendMessage = (e?: React.FormEvent) => {
+  const handleSendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!messageText.trim()) return;
 
-    const newMessage = {
-      id: Date.now(),
-      contactId: selectedContact.id,
-      text: messageText,
-      sender: 'me',
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'sent'
-    };
+    try {
+      // Send message via API
+      const result = await createMessage({
+        receiver_id: selectedContact.id,
+        subject: 'Direct Message',
+        message_text: messageText,
+        message_type: 'message',
+        status: 'sent'
+      });
 
-    const updated = [...allMessages, newMessage];
-    setAllMessages(updated);
-    storage.set('messages', updated);
-    setMessageText("");
+      if (result.success) {
+        // Add message to local state
+        const newMessage = {
+          id: result.message_id || Date.now(),
+          contactId: selectedContact.id,
+          text: messageText,
+          sender: 'me',
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: 'sent'
+        };
 
-    // Simulate a reply after 2 seconds
-    setTimeout(() => {
-      const reply = {
-        id: Date.now() + 1,
+        const updated = [...allMessages, newMessage];
+        setAllMessages(updated);
+        setMessageText("");
+        showSuccess('Message sent successfully');
+        
+        // Reload messages to get latest
+        setTimeout(loadMessages, 1000);
+      }
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      // Fallback to local state
+      const newMessage = {
+        id: Date.now(),
         contactId: selectedContact.id,
-        text: `Thanks for the update! I'll check it out.`,
-        sender: 'them',
+        text: messageText,
+        sender: 'me',
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        status: 'delivered'
+        status: 'sent'
       };
-      const withReply = [...updated, reply];
-      setAllMessages(withReply);
-      storage.set('messages', withReply);
-      showSuccess(`New message from ${selectedContact.name}`);
-    }, 2000);
+
+      const updated = [...allMessages, newMessage];
+      setAllMessages(updated);
+      setMessageText("");
+    }
   };
 
   const currentChatMessages = allMessages.filter(m => m.contactId === selectedContact.id);

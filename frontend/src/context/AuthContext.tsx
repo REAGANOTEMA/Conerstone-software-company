@@ -1,208 +1,201 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useReducer, useEffect } from "react";
+import { apiService } from '../services/api';
 
 export type Role = "admin" | "director" | "staff" | "client" | "student";
 
 export interface User {
-  id: string;
-  name: string;
+  id: number;
+  student_id: string;
+  first_name: string;
+  last_name: string;
   email: string;
   role: Role;
-  title?: string;
+  total_credits?: number;
+  completed_credits?: number;
+  gpa?: number;
+  current_semester?: string;
+  academic_year?: number;
   avatar?: string;
   bio?: string;
   phone?: string;
   location?: string;
-  organizationId?: string;
-  password?: string;
   isApproved?: boolean;
   registrationDate?: string;
-  enrolledCourses?: string[];
-  projectIds?: string[];
 }
 
-interface AuthContextType {
+interface AuthState {
   user: User | null;
-  login: (email: string, password: string, role: Role) => boolean;
-  register: (name: string, email: string, role: Role, password?: string, profileData?: Partial<User>) => void;
-  updateProfile: (data: Partial<User>) => void;
-  logout: () => void;
+  token: string | null;
+  error: string | null;
+  loading: boolean;
   isAuthenticated: boolean;
-  pendingUsers: User[];
-  approveUser: (userId: string) => void;
-  rejectUser: (userId: string) => void;
-  getPendingUsers: () => User[];
 }
+
+interface AuthContextType extends AuthState {
+  login: (email: string, password: string) => Promise<void>;
+  register: (userData: {
+    student_id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+    role?: Role;
+  }) => Promise<void>;
+  logout: () => void;
+  clearError: () => void;
+  checkAuth: () => Promise<void>;
+  updateProfile: (data: Partial<User>) => Promise<void>;
+}
+
+const initialState: AuthState = {
+  user: null,
+  token: null,
+  error: null,
+  loading: false,
+  isAuthenticated: false,
+};
+
+const authReducer = (state: AuthState, action: any) => {
+  switch (action.type) {
+    case 'LOGIN_START':
+      return { ...state, loading: true, error: null };
+    case 'LOGIN_SUCCESS':
+      return { ...state, user: action.payload.user, token: action.payload.token, loading: false, isAuthenticated: true };
+    case 'LOGIN_FAILURE':
+      return { ...state, error: action.payload, loading: false, isAuthenticated: false };
+    case 'REGISTER_START':
+      return { ...state, loading: true, error: null };
+    case 'REGISTER_SUCCESS':
+      return { ...state, user: action.payload.user, token: action.payload.token, loading: false, isAuthenticated: true };
+    case 'REGISTER_FAILURE':
+      return { ...state, error: action.payload, loading: false, isAuthenticated: false };
+    case 'LOGOUT':
+      return { ...state, user: null, token: null, isAuthenticated: false };
+    case 'CLEAR_ERROR':
+      return { ...state, error: null };
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    default:
+      return state;
+  }
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Company Directors
-const DIRECTORS: User[] = [
-  {
-    id: "dir_reagan",
-    name: "Reagan Otema",
-    email: "reagan@nexterp.com",
-    password: "password123",
-    role: "director",
-    title: "Executive Director - Technology",
-    avatar: "/src/assets/reagan.png",
-    bio: "Co-Founder & Executive Director leading Technology and Innovation.",
-    phone: "+256 700 000 001",
-    location: "Iganga, Uganda",
-    organizationId: "org_nexterp"
-  },
-  {
-    id: "dir_najiib",
-    name: "Binsobedde Najiib",
-    email: "najiib@nexterp.com",
-    password: "password123",
-    role: "director",
-    title: "Executive Director - Business",
-    avatar: "/src/assets/najiib.jpg",
-    bio: "Co-Founder & Executive Director leading Business Strategy and Growth.",
-    phone: "+256 700 000 002",
-    location: "Iganga, Uganda",
-    organizationId: "org_nexterp"
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
   }
-];
+  return context;
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [pendingUsers, setPendingUsers] = useState<User[]>([]);
+  const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Load user from localStorage on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem("nexterp_user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    
-    // Load pending users
-    const savedPending = localStorage.getItem("nexterp_pending_users");
-    if (savedPending) {
-      setPendingUsers(JSON.parse(savedPending));
+    if (state.token) {
+      apiService.setToken(state.token);
+      checkAuth();
     }
   }, []);
 
-  // Login function with approval check
-  const login = (email: string, password: string, role: Role): boolean => {
-    const director = DIRECTORS.find(d => d.email.toLowerCase() === email.toLowerCase());
-
-    // Directors login (auto-approved)
-    if (director) {
-      if (director.password === password) {
-        const approvedDirector = { ...director, isApproved: true };
-        setUser(approvedDirector);
-        localStorage.setItem("nexterp_user", JSON.stringify(approvedDirector));
-        return true;
+  const login = async (email: string, password: string) => {
+    dispatch({ type: 'LOGIN_START' });
+    try {
+      const response = await apiService.login(email, password);
+      if (response.success && response.token) {
+        apiService.setToken(response.token);
+        localStorage.setItem('conerstone_token', response.token);
+        dispatch({
+          type: 'LOGIN_SUCCESS',
+          payload: { user: response.user, token: response.token },
+        });
+      } else {
+        dispatch({ type: 'LOGIN_FAILURE', payload: response.message || 'Login failed' });
       }
-      return false;
-    }
-
-    // Check approved users
-    const approvedUsers = JSON.parse(localStorage.getItem("nexterp_approved_users") || "[]");
-    const approvedUser = approvedUsers.find((u: User) => 
-      u.email.toLowerCase() === email.toLowerCase() && u.role === role
-    );
-
-    if (approvedUser && password === "password123") {
-      setUser(approvedUser);
-      localStorage.setItem("nexterp_user", JSON.stringify(approvedUser));
-      return true;
-    }
-
-    return false; // Not approved or wrong password
-  };
-
-  // Registration with approval requirement
-  const register = (name: string, email: string, role: Role, password?: string, profileData?: Partial<User>) => {
-    const newUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      name,
-      email,
-      role,
-      password,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-      organizationId: "org_nexterp",
-      isApproved: false,
-      registrationDate: new Date().toISOString(),
-      enrolledCourses: [],
-      projectIds: [],
-      ...profileData,
-    };
-    
-    // Add to pending users for director approval
-    const updated = [...pendingUsers, newUser];
-    setPendingUsers(updated);
-    localStorage.setItem("nexterp_pending_users", JSON.stringify(updated));
-  };
-
-  // Approve user (directors only)
-  const approveUser = (userId: string) => {
-    const userToApprove = pendingUsers.find(u => u.id === userId);
-    if (userToApprove) {
-      const approvedUser = { ...userToApprove, isApproved: true };
-      
-      // Remove from pending and add to approved users storage
-      const updatedPending = pendingUsers.filter(u => u.id !== userId);
-      setPendingUsers(updatedPending);
-      localStorage.setItem("nexterp_pending_users", JSON.stringify(updatedPending));
-      
-      // Save to approved users
-      const approvedUsers = JSON.parse(localStorage.getItem("nexterp_approved_users") || "[]");
-      approvedUsers.push(approvedUser);
-      localStorage.setItem("nexterp_approved_users", JSON.stringify(approvedUsers));
+    } catch (error) {
+      dispatch({ type: 'LOGIN_FAILURE', payload: 'Login failed. Please try again.' });
     }
   };
 
-  // Reject user (directors only)
-  const rejectUser = (userId: string) => {
-    const updatedPending = pendingUsers.filter(u => u.id !== userId);
-    setPendingUsers(updatedPending);
-    localStorage.setItem("nexterp_pending_users", JSON.stringify(updatedPending));
+  const register = async (userData: {
+    student_id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+    role?: Role;
+  }) => {
+    dispatch({ type: 'REGISTER_START' });
+    try {
+      const response = await apiService.register(userData);
+      if (response.success && response.token) {
+        apiService.setToken(response.token);
+        localStorage.setItem('conerstone_token', response.token);
+        dispatch({
+          type: 'REGISTER_SUCCESS',
+          payload: { user: response.user, token: response.token },
+        });
+      } else {
+        dispatch({ type: 'REGISTER_FAILURE', payload: response.message || 'Registration failed' });
+      }
+    } catch (error) {
+      dispatch({ type: 'REGISTER_FAILURE', payload: 'Registration failed. Please try again.' });
+    }
   };
 
-  // Get pending users
-  const getPendingUsers = () => pendingUsers;
-
-  // Update profile
-  const updateProfile = (data: Partial<User>) => {
-    if (!user) return;
-    const updatedUser = { ...user, ...data };
-    setUser(updatedUser);
-    localStorage.setItem("nexterp_user", JSON.stringify(updatedUser));
-  };
-
-  // Logout
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem("nexterp_user");
+    apiService.removeToken();
+    localStorage.removeItem('conerstone_token');
+    dispatch({ type: 'LOGOUT' });
   };
 
-  return (
-    <AuthContext.Provider
-      value={{ 
-        user, 
-        login, 
-        register, 
-        updateProfile, 
-        logout, 
-        isAuthenticated: !!user,
-        pendingUsers,
-        approveUser,
-        rejectUser,
-        getPendingUsers
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  const clearError = () => {
+    dispatch({ type: 'CLEAR_ERROR' });
+  };
 
-// Hook for easy access
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
-  return context;
+  const checkAuth = async () => {
+    if (!state.token) return;
+    
+    dispatch({ type: 'SET_LOADING', payload: true });
+    try {
+      const response = await apiService.getCurrentUser();
+      if (response.success) {
+        dispatch({
+          type: 'LOGIN_SUCCESS',
+          payload: { user: response.user, token: state.token! },
+        });
+      } else {
+        logout();
+      }
+    } catch (error) {
+      logout();
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const updateProfile = async (data: Partial<User>) => {
+    try {
+      // This would be implemented in the API service
+      console.log('Profile update:', data);
+    } catch (error) {
+      console.error('Profile update failed:', error);
+    }
+  };
+
+  const value: AuthContextType = {
+    ...state,
+    login,
+    register,
+    logout,
+    clearError,
+    checkAuth,
+    updateProfile,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
