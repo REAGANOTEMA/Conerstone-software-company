@@ -79,21 +79,27 @@ class ApiService {
 
   // Authentication
   async login(email: string, password: string) {
-    return this.request('/auth/login', {
+    return this.request('/login-clean.php', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
   }
 
   async register(userData: {
-    student_id: string;
+    student_id?: string;
     first_name: string;
     last_name: string;
     email: string;
     password: string;
     role?: string;
+    gender?: string;
+    age?: number;
+    mobile_number?: string;
+    country?: string;
+    bio?: string;
+    location?: string;
   }) {
-    return this.request('/auth/register', {
+    return this.request('/register-clean.php', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
