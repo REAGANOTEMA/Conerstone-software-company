@@ -36,7 +36,7 @@ interface AuthState {
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
   register: (userData: {
-    student_id: string;
+    student_id?: string;
     first_name: string;
     last_name: string;
     email: string;
@@ -122,7 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (userData: {
-    student_id: string;
+    student_id?: string;
     first_name: string;
     last_name: string;
     email: string;
